@@ -33,6 +33,25 @@ const HotelSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a region"],
     },
+    price: {
+      type: Number,
+      required: [true, "Please add price"],
+      validate: {
+        validator: function(value) {
+          return value > 0;
+        },
+        message: "Price must be greater than 0",
+      },
+    },
+    amenities: {
+      type: [String],
+      validate: {
+        validator: function(arr) {
+          return arr.length > 0;
+        },
+        message: "Amenities must have at least one item",
+      },
+    }
   },
   {
     toJSON: { virtuals: true },

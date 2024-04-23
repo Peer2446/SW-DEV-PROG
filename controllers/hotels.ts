@@ -126,3 +126,62 @@ export const deleteHotel = async (req, res, next) => {
     res.status(400).json({ success: false });
   }
 };
+
+interface SearchQuery {
+  address?: { $regex: string; $options: string };
+  district?: { $regex: string; $options: string };
+  province?: { $regex: string; $options: string };
+  region?: { $regex: string; $options: string };
+  price?: { $gte: number; $lte: number };
+  amenities?: { $all: string[] };
+}
+
+// @desc    Search hotels based on criteria
+// @route   GET /api/hotels/search
+// @access  Public
+export const searchHotels = async (req, res, next) => {
+  try {
+    // Extract search criteria from the request query
+    const { address, district, province, region, priceRange, amenities } = req.query;
+
+    // Build the search query based on the provided criteria
+    const searchQuery: SearchQuery = {};
+
+    if (address) {
+      searchQuery.address = { $regex: address, $options: "i" }; // Case-insensitive search
+    }
+
+    if (district) {
+      searchQuery.district = { $regex: district, $options: "i" };
+    }
+
+    if (province) {
+      searchQuery.province = { $regex: province, $options: "i" };
+    }
+
+    if (region) {
+      searchQuery.region = { $regex: region, $options: "i" };
+    }
+
+    if (priceRange) {
+      const [minPrice, maxPrice] = priceRange.split("-");
+      searchQuery.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+    }
+
+    if (amenities) {
+      searchQuery.amenities = { $all: amenities.split(",") }; // Find hotels with all of the provided amenities
+    }
+
+    // Execute the search query
+    const hotels = await Hotel.find(searchQuery).populate("bookings");
+
+    res.status(200).json({
+      success: true,
+      count: hotels.length,
+      data: hotels,
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+};
+
