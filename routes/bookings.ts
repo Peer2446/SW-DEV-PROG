@@ -6,15 +6,15 @@ import {
   updateBooking,
   deleteBooking,
 } from "../controllers/bookings";
-import { protect } from "../middleware/auth";
+import { protect, authorize } from "../middleware/auth";
 
 const router = express.Router();
 
-router.route("/").get(protect, getBookings).post(protect, addBooking);
+router.route("/").get(protect, getBookings).post(protect, authorize('admin','user'), addBooking);
 router
   .route("/:id")
-  .get(protect, getBooking)
-  .put(protect, updateBooking)
-  .delete(protect, deleteBooking);
+  .get(protect, authorize('admin','user'), getBooking)
+  .put(protect, authorize('admin','user'), updateBooking)
+  .delete(protect, authorize('admin','user'), deleteBooking);
 
 export default router;

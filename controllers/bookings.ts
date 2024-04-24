@@ -75,7 +75,7 @@ export const addBooking = async (req, res, next) => {
     }
     req.body.hotel = req.params.hotelId;
 
-    const hotel = await Hotel.findById(req.params.hotelId);
+    const hotel = await Hotel.findById(req.body.hotel);
 
     if (!hotel) {
       return res.status(404).json({

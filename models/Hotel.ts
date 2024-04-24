@@ -88,7 +88,7 @@ HotelSchema.pre(
   { document: true, query: false },
   async function (next) {
     console.log(`Bookings are being removed from the hotel ${this._id}`);
-    await this.model("Appointment").deleteMany({ hotel: this._id });
+    await this.model("Booking").deleteMany({ hotel: this._id });
     next();
   }
 );
