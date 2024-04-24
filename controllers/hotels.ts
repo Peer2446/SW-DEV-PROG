@@ -1,4 +1,5 @@
 import Hotel from "../models/Hotel";
+import { amentitie, roomType } from "../interfaces/hotel";
 
 // @desc    Get all hotels
 // @route   GET /api/hotels
@@ -18,7 +19,7 @@ export const getHotels = async (req, res, next) => {
       /\b(gt|gte|lt|lte|in)\b/g,
       (match) => `$${match}`
     );
-    query = Hotel.find(JSON.parse(queryStr)).populate("appointments");
+    query = Hotel.find(JSON.parse(queryStr)).populate("bookings");
 
     if (req.query.select) {
       const fields = req.query.select.split(",").join(" ");
@@ -65,6 +66,7 @@ export const getHotels = async (req, res, next) => {
       data: hotels,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ success: false });
   }
 };
@@ -133,7 +135,8 @@ interface SearchQuery {
   province?: { $regex: string; $options: string };
   region?: { $regex: string; $options: string };
   price?: { $gte: number; $lte: number };
-  amenities?: { $all: string[] };
+  amenities?: { $all: amentitie[] };
+  roomType?: { $all: roomType[] };
 }
 
 // @desc    Search hotels based on criteria
@@ -142,8 +145,15 @@ interface SearchQuery {
 export const searchHotels = async (req, res, next) => {
   try {
     // Extract search criteria from the request query
-    const { address, district, province, region, priceRange, amenities } =
-      req.query;
+    const {
+      address,
+      district,
+      province,
+      region,
+      priceRange,
+      amenities,
+      roomType,
+    } = req.query;
 
     // Build the search query based on the provided criteria
     const searchQuery: SearchQuery = {};
@@ -174,6 +184,10 @@ export const searchHotels = async (req, res, next) => {
 
     if (amenities) {
       searchQuery.amenities = { $all: amenities.split(",") }; // Find hotels with all of the provided amenities
+    }
+
+    if (roomType) {
+      searchQuery.roomType = { $all: roomType.split(",") }; // Find hotels with all of the provided room types
     }
 
     // Execute the search query

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { HotelDocument } from "../interfaces/hotel";
 
 const HotelSchema = new mongoose.Schema(
   {
@@ -33,25 +34,41 @@ const HotelSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a region"],
     },
-    price: {
-      type: Number,
-      required: [true, "Please add price"],
-      validate: {
-        validator: function(value) {
-          return value > 0;
-        },
-        message: "Price must be greater than 0",
-      },
-    },
     amenities: {
       type: [String],
       validate: {
-        validator: function(arr) {
+        validator: function (arr) {
           return arr.length > 0;
         },
         message: "Amenities must have at least one item",
       },
-    }
+    },
+    roomType: {
+      type: [
+        {
+          type: {
+            type: String,
+            required: [true, "Please add a room type"],
+          },
+          price: {
+            type: Number,
+            required: [true, "Please add a price"],
+            validate: {
+              validator: function (value) {
+                return value > 0;
+              },
+              message: "Price must be greater than 0",
+            },
+          },
+        },
+      ],
+      validate: {
+        validator: function (arr) {
+          return arr.length > 0;
+        },
+        message: "Room Type must have at least one item",
+      },
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -76,4 +93,4 @@ HotelSchema.pre(
   }
 );
 
-export default mongoose.model("Hotel", HotelSchema);
+export default mongoose.model<HotelDocument>("Hotel", HotelSchema);

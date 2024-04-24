@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { UserDocument } from "../interfaces/user";
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -39,7 +40,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Encrypt password using bcrypt
-UserSchema.pre("save", async function (next) {
+UserSchema.pre<UserDocument>("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
@@ -56,4 +57,4 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model<UserDocument>("User", UserSchema);

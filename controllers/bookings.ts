@@ -84,6 +84,13 @@ export const addBooking = async (req, res, next) => {
       });
     }
 
+    if (req.body.roomType && !hotel.roomType.includes(req.body.roomType)) {
+      return res.status(404).json({
+        success: false,
+        message: `No room type found with the type of ${req.params.roomType}`,
+      });
+    }
+
     const booking = await Booking.create(req.body);
     res.status(200).json({ success: true, data: booking });
   } catch (err) {

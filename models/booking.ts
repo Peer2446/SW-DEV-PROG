@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
+import { BookingDocument } from "../interfaces/booking";
 
 const BookingSchema = new mongoose.Schema({
-  apptDate: {
+  bookingDate: {
     type: Date,
     required: true,
   },
@@ -22,6 +23,11 @@ const BookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  roomType: {
+    type: String,
+    required: true,
+  },
 });
 
-export default mongoose.model("Booking", BookingSchema);
+export default mongoose.model<BookingDocument>("Booking", BookingSchema);

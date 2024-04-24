@@ -1,4 +1,4 @@
-const User = require("../models/User");
+import User from "../models/User";
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -44,7 +44,7 @@ export const login = async (req, res, next) => {
   }
 
   // Check if password matches
-  const isMatch = await user.matchPassword(password);
+  const isMatch = await user?.matchPassword(password);
 
   if (!isMatch) {
     return res
@@ -90,14 +90,14 @@ export const getMe = async (req, res, next) => {
 //@desc Log user out / clear cookie
 //@route GET /api/v1/auth/logout
 //@access Private
-export const logout = async(req,res,next)=>{
-  res.cookie('token','none',{
-      expires:new Date(Date.now()+10*1000),
-      httpOnly:true
+export const logout = async (req, res, next) => {
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
   });
 
   res.status(200).json({
-      success:true,
-      data:{}
+    success: true,
+    data: {},
   });
 };
