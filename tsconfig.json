@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src", // Adjust the base directory if your TypeScript files are located elsewhere
+    "paths": {
+      "*": ["*"]
+    },
+    "esModuleInterop": true
+  }
+}

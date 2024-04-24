@@ -1,25 +1,25 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser");
-const connectDB = require("./config/db");
+import express from "express";
+import { config } from "dotenv";
+import cookieParser from "cookie-parser";
+import connectDB from "./config/db";
 
-const mongoSanitize = require('express-mongo-sanitize');
-const helmet = require('helmet');
-const {xss} = require('express-xss-sanitizer');
-const rateLimit = require('express-rate-limit');
-const hpp = require('hpp');
-const cors = require('cors');
+import mongoSanitize from "express-mongo-sanitize";
+import helmet from "helmet";
+import { xss } from "express-xss-sanitizer";
+import rateLimit from "express-rate-limit";
+import hpp from "hpp";
+import cors from "cors";
 
 // Load env vars
-dotenv.config({ path: "./config/config.env" });
+config({ path: "./config/config.env" });
 
 //Connect to database
 connectDB();
 
 // Route files
-const hotels = require("./routes/hotels");
-const auth = require("./routes/auth");
-const bookings = require("./routes/bookings");
+import hotels from "./routes/hotels";
+import auth from "./routes/auth";
+import bookings from "./routes/bookings";
 
 const app = express();
 
@@ -46,8 +46,8 @@ app.use(xss());
 
 //Rate Limiting
 const limiter = rateLimit({
-    windowsMs:10*60*1000, //10 mins
-    max: 100
+  windowMs: 10 * 60 * 1000, //10 mins
+  max: 100,
 });
 app.use(limiter);
 
@@ -65,7 +65,7 @@ const server = app.listen(PORT, () =>
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {
-  console.log(`Error: ${err.message}`);
+  console.log(`Error: ${(err as Error).message}`);
   // Close server & exit process
   server.close(() => process.exit(1));
 });

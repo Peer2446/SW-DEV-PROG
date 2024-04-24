@@ -142,13 +142,14 @@ interface SearchQuery {
 export const searchHotels = async (req, res, next) => {
   try {
     // Extract search criteria from the request query
-    const { address, district, province, region, priceRange, amenities } = req.query;
+    const { address, district, province, region, priceRange, amenities } =
+      req.query;
 
     // Build the search query based on the provided criteria
     const searchQuery: SearchQuery = {};
 
     if (address) {
-      searchQuery.address = { $regex: address, $options: "i" }; // Case-insensitive search
+      searchQuery.address = { $regex: address, $options: "i" };
     }
 
     if (district) {
@@ -165,7 +166,10 @@ export const searchHotels = async (req, res, next) => {
 
     if (priceRange) {
       const [minPrice, maxPrice] = priceRange.split("-");
-      searchQuery.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+      searchQuery.price = {
+        $gte: parseInt(minPrice),
+        $lte: parseInt(maxPrice),
+      };
     }
 
     if (amenities) {
@@ -184,4 +188,3 @@ export const searchHotels = async (req, res, next) => {
     res.status(400).json({ success: false, error: err.message });
   }
 };
-
