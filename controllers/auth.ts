@@ -11,6 +11,16 @@ export const register = async (req, res, next) => {
     if (!validateUser(name, email, tel, password, role)) {
       return res.status(400).json({ success: false, message: "Invalid input" });
     }
+
+    //check if user exists
+    const existUser = await User.findOne({ email });
+
+    if (existUser) {
+      return res
+        .status(409)
+        .json({ success: false, message: "User already exists" });
+    }
+
     // Create user
     const user = await User.create({
       name,

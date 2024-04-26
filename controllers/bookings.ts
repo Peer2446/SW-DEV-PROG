@@ -63,6 +63,20 @@ export const getBooking = async (req, res, next) => {
 // @access  Private
 export const addBooking = async (req, res, next) => {
   try {
+    const checkIn = new Date(req.body.checkIn);
+    const checkOut = new Date(req.body.checkOut);
+
+    // to book up to 3 nights but not more than 3 nights
+    if (
+      checkIn >= checkOut ||
+      checkOut.getTime() - checkIn.getTime() > 3 * 24 * 60 * 60 * 1000
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: `Check out date must be at least 1 day after check in date and not more than 3 days`,
+      });
+    }
+
     req.body.user = req.user.id;
 
     const existBookings = await Booking.find({ user: req.user.id });

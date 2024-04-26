@@ -28,6 +28,16 @@ const BookingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  checkIn: {
+    type: Date,
+    required: true,
+  },
+
+  checkOut: {
+    type: Date,
+    required: true,
+  },
 });
 
 export default mongoose.model<BookingDocument>("Booking", BookingSchema);
