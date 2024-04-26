@@ -1,6 +1,7 @@
 import Hotel from "../models/Hotel";
 import { amentitie, roomType } from "../interfaces/hotel";
 import { validateHotel } from "../lib/validate/hotel";
+import { start } from "repl";
 
 // @desc    Get all hotels
 // @route   GET /api/hotels
@@ -12,7 +13,6 @@ export const getHotels = async (req, res, next) => {
 
     const removeFields = ["select", "sort", "page", "limit"];
     removeFields.forEach((param) => delete reqQuery[param]);
-    console.log(reqQuery);
 
     let queryStr = JSON.stringify(reqQuery);
 
@@ -67,7 +67,6 @@ export const getHotels = async (req, res, next) => {
       data: hotels,
     });
   } catch (err) {
-    console.log(err);
     res.status(400).json({ success: false });
   }
 };
@@ -100,6 +99,7 @@ export const createHotel = async (req, res, next) => {
     postalcode,
     tel,
     region,
+    starterPrice,
     amenities,
     roomType,
   } = req.body;
@@ -113,6 +113,7 @@ export const createHotel = async (req, res, next) => {
       postalcode,
       tel,
       region,
+      starterPrice,
       amenities,
       roomType
     )
@@ -163,9 +164,10 @@ interface SearchQuery {
   district?: { $regex: string; $options: string };
   province?: { $regex: string; $options: string };
   region?: { $regex: string; $options: string };
-  price?: { $gte: number; $lte: number };
+  starterPrice?: { $gte: number; $lte: number };
   amenities?: { $all: amentitie[] };
-  roomType?: { $all: roomType[] };
+  roomType?: { $all: { type: roomType; price: number }[] };
+  $or?: any[];
 }
 
 // @desc    Search hotels based on criteria
@@ -182,8 +184,7 @@ export const searchHotels = async (req, res, next) => {
       priceRange,
       amenities,
       roomType,
-    } = req.query;
-
+    } = req.body;
     // Build the search query based on the provided criteria
     const searchQuery: SearchQuery = {};
 
@@ -205,21 +206,29 @@ export const searchHotels = async (req, res, next) => {
 
     if (priceRange) {
       const [minPrice, maxPrice] = priceRange.split("-");
-      searchQuery.price = {
-        $gte: parseInt(minPrice),
-        $lte: parseInt(maxPrice),
-      };
+      if (minPrice > maxPrice) {
+        return res
+          .status(400)
+          .json({ success: false, error: "Invalid price range" });
+      }
+      searchQuery.starterPrice = { $gte: minPrice, $lte: maxPrice };
+    }
+
+    if (roomType) {
+      searchQuery.$or = [
+        {
+          roomType: {
+            $elemMatch: {
+              type: { $in: roomType.split(",") },
+            },
+          },
+        },
+      ];
     }
 
     if (amenities) {
       searchQuery.amenities = { $all: amenities.split(",") }; // Find hotels with all of the provided amenities
     }
-
-    if (roomType) {
-      searchQuery.roomType = { $all: roomType.split(",") }; // Find hotels with all of the provided room types
-    }
-
-    // ...
 
     const hotels = await Hotel.find(searchQuery).populate("bookings");
 
@@ -227,7 +236,6 @@ export const searchHotels = async (req, res, next) => {
       const { bookings, ...hotelWithoutBookings } = hotel.toObject();
       return hotelWithoutBookings;
     });
-    console.log(hotelsWithOutBookings);
     res.status(200).json({
       success: true,
       count: hotels.length,

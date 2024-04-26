@@ -43,6 +43,16 @@ const HotelSchema = new mongoose.Schema(
         message: "Amenities must have at least one item",
       },
     },
+    starterPrice: {
+      type: Number,
+      required: [true, "Please add a starting price"],
+      validate: {
+        validator: function (value) {
+          return value > 0;
+        },
+        message: "Price must be greater than 0",
+      },
+    },
     roomType: {
       type: [
         {

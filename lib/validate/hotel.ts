@@ -6,6 +6,7 @@ export const validateHotel = (
   postalcode: string,
   tel: string,
   region: string,
+  starterPrice: number,
   amenities: string[],
   roomType: { type: string; price: number }[]
 ): boolean => {
@@ -16,6 +17,7 @@ export const validateHotel = (
     province,
     postalcode,
     tel,
+    starterPrice,
     region,
   ];
   if (requiredFields.some((field) => !field)) {
@@ -43,7 +45,10 @@ export const validateHotel = (
     return false;
   }
 
-  if (roomType.some((room) => !room.type || !room.price || room.price <= 0)) {
+  if (
+    roomType.some((room) => !room.type || !room.price || room.price <= 0) ||
+    starterPrice <= 0
+  ) {
     return false;
   }
 
