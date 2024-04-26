@@ -8,13 +8,16 @@ import {
 } from "../controllers/bookings";
 import { protect, authorize } from "../middleware/auth";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
-router.route("/").get(protect, getBookings).post(protect, authorize('admin','user'), addBooking);
+router
+  .route("/")
+  .get(protect, getBookings)
+  .post(protect, authorize("admin", "user"), addBooking);
 router
   .route("/:id")
-  .get(protect, authorize('admin','user'), getBooking)
-  .put(protect, authorize('admin','user'), updateBooking)
-  .delete(protect, authorize('admin','user'), deleteBooking);
+  .get(protect, authorize("admin", "user"), getBooking)
+  .put(protect, authorize("admin", "user"), updateBooking)
+  .delete(protect, authorize("admin", "user"), deleteBooking);
 
 export default router;

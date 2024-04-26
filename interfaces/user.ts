@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export interface UserDocument extends Document {
   name: string;
-  tel?: string;
+  tel: string;
   email: string;
   role: "user" | "admin";
   password: string;

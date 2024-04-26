@@ -64,7 +64,6 @@ export const getBooking = async (req, res, next) => {
 export const addBooking = async (req, res, next) => {
   try {
     req.body.user = req.user.id;
-    console.log(req.user.id);
 
     const existBookings = await Booking.find({ user: req.user.id });
     if (existBookings.length >= 3 && req.user.role !== "admin") {
@@ -73,10 +72,10 @@ export const addBooking = async (req, res, next) => {
         message: `The user with ID ${req.user.id} has already made 3 bookings`,
       });
     }
+
     req.body.hotel = req.params.hotelId;
 
     const hotel = await Hotel.findById(req.body.hotel);
-
     if (!hotel) {
       return res.status(404).json({
         success: false,
@@ -84,15 +83,16 @@ export const addBooking = async (req, res, next) => {
       });
     }
 
-    if (req.body.roomType && !hotel.roomType.includes(req.body.roomType)) {
+    const hotelRoomTypes = hotel.roomType.map((room) => room.type);
+    if (req.body.roomType && !hotelRoomTypes.includes(req.body.roomType)) {
       return res.status(404).json({
         success: false,
-        message: `No room type found with the type of ${req.params.roomType}`,
+        message: `No room type found with the type of ${req.body.roomType}`,
       });
     }
 
     const booking = await Booking.create(req.body);
-    res.status(200).json({ success: true, data: booking });
+    res.status(201).json({ success: true, data: booking });
   } catch (err) {
     console.log(err);
     res.status(400).json({ success: false, message: "Cannot create Booking" });

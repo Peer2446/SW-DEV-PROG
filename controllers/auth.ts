@@ -1,12 +1,16 @@
 import User from "../models/User";
+import { validateUser } from "../lib/validate/user";
 
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
 export const register = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, tel, password, role } = req.body;
 
+    if (!validateUser(name, email, tel, password, role)) {
+      return res.status(400).json({ success: false, message: "Invalid input" });
+    }
     // Create user
     const user = await User.create({
       name,
@@ -14,7 +18,7 @@ export const register = async (req, res, next) => {
       password,
       role,
     });
-    sendTokenResponse(user, 200, res);
+    sendTokenResponse(user, 201, res);
   } catch (err) {
     res.status(400).json({ success: false });
     console.log(err);

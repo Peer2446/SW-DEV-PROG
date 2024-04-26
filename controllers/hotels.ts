@@ -1,5 +1,6 @@
 import Hotel from "../models/Hotel";
 import { amentitie, roomType } from "../interfaces/hotel";
+import { validateHotel } from "../lib/validate/hotel";
 
 // @desc    Get all hotels
 // @route   GET /api/hotels
@@ -89,7 +90,35 @@ export const getHotel = async (req, res, next) => {
 // @desc    Create new hotel
 // @route   POST /api/hotels
 // @access  Private
+
 export const createHotel = async (req, res, next) => {
+  const {
+    name,
+    address,
+    district,
+    province,
+    postalcode,
+    tel,
+    region,
+    amenities,
+    roomType,
+  } = req.body;
+
+  if (
+    !validateHotel(
+      name,
+      address,
+      district,
+      province,
+      postalcode,
+      tel,
+      region,
+      amenities,
+      roomType
+    )
+  ) {
+    return res.status(400).json({ success: false, message: "Invalid input" });
+  }
   const hotel = await Hotel.create(req.body);
   res.status(201).json({ success: true, data: hotel });
 };

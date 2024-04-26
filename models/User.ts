@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { UserDocument } from "../interfaces/user";
+import { match } from "assert";
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -10,6 +11,7 @@ const UserSchema = new mongoose.Schema({
   },
   tel: {
     type: String,
+    match: [/^0[0-9]{9}$/, "Please add a valid phone number"],
   },
   email: {
     type: String,
