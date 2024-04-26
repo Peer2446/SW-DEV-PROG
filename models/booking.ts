@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 import { BookingDocument } from "../interfaces/booking";
 
 const BookingSchema = new mongoose.Schema({
-  bookingDate: {
-    type: Date,
-    required: true,
-  },
-
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
