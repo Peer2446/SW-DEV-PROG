@@ -16,11 +16,9 @@ const router = express.Router();
 // Re-route into other resource routers
 router.use("/:hotelId/bookings", bookingRouter);
 
-router
-  .route("/")
-  .get(getHotels)
-  .post(protect, authorize("admin"), createHotel)
-  .get(searchHotels);
+router.route("/search").get(searchHotels);
+
+router.route("/").get(getHotels).post(protect, authorize("admin"), createHotel);
 router
   .route("/:id")
   .get(getHotel)

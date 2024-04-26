@@ -219,15 +219,22 @@ export const searchHotels = async (req, res, next) => {
       searchQuery.roomType = { $all: roomType.split(",") }; // Find hotels with all of the provided room types
     }
 
-    // Execute the search query
+    // ...
+
     const hotels = await Hotel.find(searchQuery).populate("bookings");
 
+    const hotelsWithOutBookings = hotels.map((hotel: any) => {
+      const { bookings, ...hotelWithoutBookings } = hotel.toObject();
+      return hotelWithoutBookings;
+    });
+    console.log(hotelsWithOutBookings);
     res.status(200).json({
       success: true,
       count: hotels.length,
-      data: hotels,
+      data: hotelsWithOutBookings,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ success: false, error: err.message });
   }
 };
