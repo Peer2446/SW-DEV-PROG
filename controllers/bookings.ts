@@ -52,6 +52,13 @@ export const getBooking = async (req, res, next) => {
         message: `No booking found with the id of ${req.params.id}`,
       });
     }
+    const userId = booking.user.toString();
+    if (userId !== req.user.id && req.user.role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to view this booking`,
+      });
+    }
     res.status(200).json({ success: true, data: booking });
   } catch (err) {
     res.status(500).json({ success: false, message: "Cannot find Booking" });

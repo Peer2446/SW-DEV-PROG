@@ -12,7 +12,7 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(protect, getBookings)
+  .get(protect, authorize("admin"), getBookings)
   .post(protect, authorize("admin", "user"), addBooking);
 router
   .route("/:id")
