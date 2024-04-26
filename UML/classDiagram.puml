@@ -1,0 +1,84 @@
+@startuml
+top to bottom direction
+package "Hotel"{
+    class "<<Application>>HotelBookingService" as HotelBookingService{}
+
+    class "<<Resource>>\nHotels" as ResourceHotels{
+        <<GET>> +getHotels():Hotels
+        <<POST>> +createHotel():Hotel
+        <<GET>> +searchHotel():Hotel
+    }
+
+    class "<<Resource>>\Hotels" as ResourceHotel {
+        <<GET>> +getHotel(): Hotel
+        <<PUT>> +updateHotel(): Hotel
+        <<DELETE>> +deleteHotel(): void
+    }
+
+    class "<<Representation>>\nHotel" as RepresentationHotel {
+    -name
+    -address
+    -district
+    -province
+    -postalcode
+    -tel
+    -region
+    -amenities
+    -roomType
+    }
+
+    class "<<Resource>>\nBookings" as ResourceBookings{
+        <<GET>> +getBookings():Bookings
+        <<POST>> +addBooking():Booking
+    }
+
+    class "<<Resource>>\Bookings" as ResourceBooking {
+        <<GET>> +getBooking(): Booking
+        <<PUT>> +updateBooking(): Booking
+        <<DELETE>> +deleteBooking(): void
+    }
+    
+    class "<<Representation>>\nBookings" as RepresentationBooking {
+    -user
+    -hotel
+    -createdAt
+    -roomType
+    -checkIn
+    -checkOut
+    }
+
+    class "<<Resource>>nUsers" as ResourceUsers{
+        <<GET>> +getMe():User
+        <<POST>> +login():token
+        <<POST>> +register():token
+        <<GET>> +logout():void
+
+    }
+
+    class "<<Representation>>\User" as RepresentationUser {
+    -name
+    -tel
+    -email
+    -role
+    -password
+    -resetPasswordToken
+    -resetPasswordExpire
+    -createdAt
+    }
+
+}
+
+HotelBookingService ..> ResourceHotels:"/api/hotels\n<<Path>>"
+HotelBookingService ..> ResourceBookings:"/api/bookings\n<<Path>>"
+HotelBookingService ..> ResourceUsers:"/api/users\n<<Path>>"
+
+ResourceHotels ..> ResourceHotel: "/{hotelId}\n<<Path>>"
+ResourceHotel ..> RepresentationHotel: "<<use>>"
+
+ResourceBookings ..> ResourceBooking: "/{bookingId}\n<<Path>>"
+ResourceBooking ..> RepresentationBooking: "<<use>>"
+
+ResourceUsers ..> RepresentationUser: "<<use>>"
+@enduml
+
+
