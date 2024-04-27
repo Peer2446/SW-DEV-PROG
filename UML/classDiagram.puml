@@ -79,6 +79,10 @@ ResourceBookings ..> ResourceBooking: "/{bookingId}\n<<Path>>"
 ResourceBooking ..> RepresentationBooking: "<<use>>"
 
 ResourceUsers ..> RepresentationUser: "<<use>>"
+note right of ResourceHotels
+  searchHotels() endpoint
+  Path: /api/hotels/search
+  end note
 @enduml
 
 

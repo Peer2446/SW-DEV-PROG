@@ -1,37 +1,31 @@
-@startuml
-left to right direction
-actor Admin as Admin
-actor "Hotel User" as User
+digraph HotelBookingSystem {
+    rankdir=LR; // Left to Right direction
 
-rectangle "Hotel Booking System" as System {
-    usecase "Admin Functions" as AdminFunctions
-    usecase "User Functions" as UserFunctions
+    // Actors
+    node [shape=actor];
+    User [label="Hotel User"];
+    Admin;
+
+
+    // Use cases
+    node [shape=rect];
+    System [label="{Hotel Booking System
+    node [shape=ellipse];
+    ManageHotels [label="Manage Hotels"];
+    ManageBookings [label="Manage Bookings"];
+    SearchHotels [label="Search Hotels"];
+    BookRoom [label="Book a Room"];
+    ViewBooking [label="View Booking"];
+    UpdateBooking [label="Update Booking"];
+    CancelBooking [label="Cancel Booking"];
+    ViewAllHotels [label="View All Hotels"];
+    ViewHotelDetails [label="View Hotel Details"];
+    Register;
+    Login;
+    GetUserDetails [label="Get User Details"];
+    Logout}style="rounded,filled" fillcolor="#dddddd"];
+
+    // Relationships
+    User -> {SearchHotels BookRoom ViewBooking UpdateBooking CancelBooking ViewAllHotels ViewHotelDetails Register Login GetUserDetails Logout};
+    Admin -> {ManageHotels ManageBookings SearchHotels ViewBooking UpdateBooking CancelBooking ViewAllHotels ViewHotelDetails Register Login GetUserDetails Logout};
 }
-
-User --> UserFunctions: "Performs\nUser Functions"
-Admin --> AdminFunctions: "Performs\nAdmin Functions"
-
-AdminFunctions --> System: (Manage Hotels)
-AdminFunctions --> System: (Manage Bookings)
-AdminFunctions --> System: (Search Hotels)
-AdminFunctions --> System: (View Booking by Hotel ID)
-
-UserFunctions --> System: (Search Hotels)
-UserFunctions --> System: (Book a Room)
-UserFunctions --> System: (View Booking)
-UserFunctions --> System: (Update Booking)
-UserFunctions --> System: (Cancel Booking)
-UserFunctions --> System: (View All Hotels)
-UserFunctions --> System: (View Hotel Details)
-UserFunctions --> System: (Register)
-UserFunctions --> System: (Login)
-UserFunctions --> System: (Get User Details)
-UserFunctions --> System: (Logout)
-
-AdminFunctions --> System: (Create Hotel)
-AdminFunctions --> System: (Update Hotel)
-AdminFunctions --> System: (Delete Hotel)
-
-AdminFunctions --> System: (View All Hotels)
-AdminFunctions --> System: (View Hotel Details)
-@enduml
